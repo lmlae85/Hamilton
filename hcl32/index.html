@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#26333d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Ratingskalaer" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>HCL-32 hypomani self-rating-skala</title>
+  <style>
+    :root{
+      --bg:#f5f2eb;
+      --panel:#fffdf8;
+      --panel2:#fdf8ef;
+      --text:#20272d;
+      --muted:#66737f;
+      --line:#e6ded0;
+      --accent:#26333d;
+      --accent2:#936f3a;
+      --good:#1f6f55;
+      --warn:#a46100;
+      --bad:#a73434;
+      --shadow:0 18px 45px rgba(28,31,35,.11);
+      --radius:22px;
+      --radius2:14px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(147,111,58,.18), transparent 34rem),
+        linear-gradient(180deg, #faf7f0 0%, var(--bg) 42%, #efe8da 100%);
+      min-height:100vh;
+    }
+    button,input,select,textarea{font:inherit}
+    .app{width:min(1120px,100%);margin:0 auto;padding:20px 16px 120px}
+    .hero{position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.48);border-radius:30px;background:linear-gradient(135deg,#26333d 0%,#314657 58%,#6f5632 100%);color:white;padding:28px;box-shadow:var(--shadow)}
+    .hero:before{content:"";position:absolute;inset:auto -60px -100px auto;width:250px;height:250px;border-radius:50%;border:38px solid rgba(255,255,255,.08)}
+    .hero-content{position:relative;z-index:1}
+    .eyebrow{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);font-size:13px;letter-spacing:.02em}
+    h1{margin:16px 0 8px;font-size:clamp(30px,6vw,54px);line-height:1;letter-spacing:-.055em}
+    .hero p{max-width:780px;margin:0;color:rgba(255,255,255,.84);font-size:16px;line-height:1.55}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .btn{border:0;border-radius:999px;padding:12px 16px;cursor:pointer;background:var(--accent);color:white;box-shadow:0 10px 20px rgba(38,51,61,.16);min-height:44px;transition:transform .15s ease, opacity .15s ease, background .15s ease;font-weight:750}
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .btn.secondary{background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25)}
+    .btn.light{background:#fffdf8;color:var(--accent);border:1px solid var(--line);box-shadow:none}
+    .btn.danger{background:var(--bad)}
+    .btn.small{padding:9px 12px;min-height:38px;font-size:14px}
+    .grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start;margin-top:18px}
+    .card{background:rgba(255,253,248,.86);border:1px solid rgba(230,222,208,.9);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;backdrop-filter:blur(12px)}
+    .card.pad{padding:18px}
+    .meta-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .field label{display:block;font-size:12px;font-weight:750;color:var(--muted);margin:0 0 6px;text-transform:uppercase;letter-spacing:.04em}
+    .field input,.field select{width:100%;border:1px solid var(--line);border-radius:14px;background:white;padding:12px 13px;color:var(--text);outline:none;min-height:46px}
+    .field input:focus,.field select:focus{border-color:var(--accent2);box-shadow:0 0 0 4px rgba(147,111,58,.12)}
+    .info-box{margin-top:12px;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:13px 14px;color:#48545f;line-height:1.45;font-size:14px}
+    .auto-row{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 13px;border:1px solid var(--line);border-radius:16px;background:#fffdf8;color:#3f4a53;font-size:14px;font-weight:700;cursor:pointer}
+    .auto-row input{width:18px;height:18px;accent-color:var(--accent2)}
+    .section{padding:18px;border-bottom:1px solid var(--line);scroll-margin-top:88px}
+    .section:last-child{border-bottom:0}
+    body.single-hcl-mode #hclItems .section:not(.active-hcl-item){display:none}
+    body.single-hcl-mode .toc a:not(.active){opacity:.45}
+    .section-head{display:flex;gap:12px;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+    .section-title-row{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+    .section h2{margin:0;font-size:19px;line-height:1.2;letter-spacing:-.02em}
+    .hint{margin:6px 0 0;color:var(--muted);line-height:1.4;font-size:14px}
+    .status-pill{flex:0 0 auto;border-radius:999px;padding:6px 9px;border:1px solid var(--line);color:var(--muted);background:white;font-size:13px;white-space:nowrap;font-weight:750}
+    .status-pill.done{color:white;background:var(--good);border-color:var(--good)}
+    .options{display:grid;gap:8px;margin-top:12px}
+    .options.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .options.four{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .option{display:grid;grid-template-columns:auto 1fr auto;gap:11px;align-items:start;cursor:pointer;background:white;border:1px solid var(--line);border-radius:16px;padding:12px 12px;transition:border-color .15s ease, box-shadow .15s ease, transform .15s ease, background .15s ease;min-height:50px}
+    .option.simple{grid-template-columns:auto 1fr}
+    .option:hover{transform:translateY(-1px);border-color:#d0bd9b}
+    .option input{margin-top:2px;width:18px;height:18px;accent-color:var(--accent2)}
+    .option .text{line-height:1.38;font-size:15px}
+    .score-badge{display:inline-flex;align-items:center;justify-content:center;min-width:42px;height:28px;border-radius:999px;background:#f1eadf;color:#5b4930;font-size:13px;font-weight:800}
+    .option:has(input:checked){background:#fffaf0;border-color:var(--accent2);box-shadow:0 0 0 4px rgba(147,111,58,.12)}
+    .flow-controls{display:flex;justify-content:space-between;gap:10px;margin-top:14px}
+    .flow-controls .btn{min-width:108px}
+    .flow-controls .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+    .subgrid{display:grid;gap:12px;margin-top:12px}
+    .domain{border:1px solid var(--line);background:#fffdf8;border-radius:18px;padding:13px}
+    .domain h3{margin:0 0 9px;font-size:15px;color:#37424c;letter-spacing:-.01em}
+    .domain .options{margin-top:0}
+    .side{position:sticky;top:14px;display:grid;gap:14px}
+    .score-card{background:#fffdf8;border:1px solid var(--line);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow)}
+    .score-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .score-label{margin:0;color:var(--muted);font-size:14px;font-weight:750}
+    .score-number{margin:5px 0 0;font-size:54px;line-height:.9;font-weight:850;letter-spacing:-.07em;color:var(--accent)}
+    .score-number span{font-size:17px;letter-spacing:0;color:var(--muted);font-weight:700}
+    .severity{display:inline-flex;align-items:center;gap:8px;margin-top:12px;border-radius:999px;background:#f1eadf;padding:8px 11px;color:#5b4930;font-weight:800;font-size:14px;text-align:center}
+    .severity.ok{background:#e6f1ec;color:#1f6f55}.severity.warn{background:#fff1d9;color:#8a5500}.severity.high{background:#f8dddd;color:#9b2b2b}
+    .bar{height:12px;border-radius:999px;background:#ede5d8;overflow:hidden;margin:16px 0 8px}.bar>div{height:100%;width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent));transition:width .2s ease}
+    .progress-text{color:var(--muted);font-size:13px;line-height:1.35}.side-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .result-box{margin-top:14px;border-radius:16px;padding:13px 14px;background:#f6f0e6;border:1px solid var(--line);line-height:1.45;color:#3e4851;font-size:14px}
+    .alert{display:none;margin-top:12px;border:1px solid rgba(164,97,0,.30);background:#fff3dd;color:#7b4a00;border-radius:16px;padding:12px 13px;line-height:1.4;font-size:14px;font-weight:650}.alert.show{display:block}
+    .toc{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}.toc a{display:flex;align-items:center;justify-content:center;height:34px;text-decoration:none;color:var(--muted);border:1px solid var(--line);border-radius:12px;background:white;font-size:13px;font-weight:800}.toc a.done{background:var(--good);border-color:var(--good);color:white}
+    .quick-links{display:grid;gap:7px;margin-top:10px}.quick-links a{text-decoration:none;color:#43505b;border:1px solid var(--line);background:#fffdf8;border-radius:14px;padding:9px 10px;font-size:14px;font-weight:750}.quick-links a:hover{border-color:var(--accent2);background:#fffaf0}
+    .toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(25px);opacity:0;pointer-events:none;background:#20272d;color:white;border-radius:999px;padding:12px 16px;box-shadow:var(--shadow);transition:.2s ease;z-index:20}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .bottom-bar{display:none;position:fixed;left:0;right:0;bottom:0;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(255,253,248,.92);border-top:1px solid var(--line);backdrop-filter:blur(16px);z-index:10}.bottom-inner{display:flex;align-items:center;justify-content:space-between;gap:10px;width:min(1120px,100%);margin:auto}.mini-score{font-weight:850;color:var(--accent)}.mini-score span{color:var(--muted);font-weight:650;font-size:13px}
+    .install-note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:10px}.source{font-size:12px;color:var(--muted);line-height:1.4;margin-top:14px}
+    dialog{width:min(720px,calc(100% - 24px));border:0;border-radius:24px;padding:0;box-shadow:0 30px 80px rgba(0,0,0,.25);background:#fffdf8;color:var(--text)}dialog::backdrop{background:rgba(18,24,30,.42);backdrop-filter:blur(4px)}.dialog-pad{padding:20px}.dialog-pad h2{margin:0 0 8px;font-size:25px;letter-spacing:-.03em}.dialog-pad p{line-height:1.5;color:#4b5660}textarea.note-output{width:100%;min-height:260px;resize:vertical;border:1px solid var(--line);border-radius:14px;padding:12px;background:white;color:var(--text)}
+    .hidden{display:none!important}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}.side{position:static;order:-1}.toc{grid-template-columns:repeat(8,1fr)}.bottom-bar{display:block}.score-card.compact-hide{display:none}.hero{padding:22px}.options.four{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media (max-width:560px){.app{padding:12px 10px 110px}.hero{border-radius:24px;padding:20px}.hero-actions .btn{flex:1 1 auto}.meta-grid{grid-template-columns:1fr}.section{padding:16px 12px}.section-head{display:block}.status-pill{display:inline-flex;margin-top:10px}.option{grid-template-columns:auto 1fr}.score-badge{grid-column:2;justify-self:start;height:24px;min-width:32px}.toc{grid-template-columns:repeat(6,1fr)}.options.two,.options.four{grid-template-columns:1fr}}
+
+    a.btn{text-decoration:none;display:inline-flex;align-items:center;justify-content:center}
+    .home-btn{backdrop-filter:blur(10px)}
+    @media print{body{background:white}.hero,.side-actions,.bottom-bar,.toc,.quick-links,.btn,.toast,.flow-controls{display:none!important}.app{padding:0}.grid{display:block}.card,.score-card{box-shadow:none;border:1px solid #ccc;background:white}.section{break-inside:avoid;padding:10px 0}.option{display:none}.option:has(input:checked){display:grid;box-shadow:none;border:1px solid #999;background:white}.score-card{margin-bottom:12px}}
+  </style>
+
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="../icon-192.png" />
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">HCL-32 · Hypomani self-rating-skala · v1.0.1 med enkelvis/vis alle</div>
+        <h1>HCL-32 hypomani-skala</h1>
+        <p>Kryds af i skemaet. Appen tæller antal <strong>Ja</strong> i de 32 HCL-spørgsmål, viser samlet screeningsscore og laver en kort journaltekst. Data gemmes kun lokalt i browseren og sendes ingen steder.</p>
+        <div class="hero-actions">
+          <a class="btn secondary home-btn" href="../index.html">← Forside</a>
+          <button class="btn secondary" type="button" onclick="document.querySelector('#sec-current').scrollIntoView()">Start vurdering</button>
+          <button class="btn secondary" type="button" id="openNoteTop">Lav journaltekst</button>
+          <button class="btn secondary" type="button" onclick="window.print()">Print / gem som PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="formCard">
+        <div class="card pad">
+          <div class="meta-grid">
+            <div class="field"><label for="patientId">Patient-ID / initialer</label><input id="patientId" autocomplete="off" placeholder="Undgå CPR" /></div>
+            <div class="field"><label for="age">Alder</label><input id="age" type="number" min="0" max="120" autocomplete="off" /></div>
+            <div class="field"><label for="sex">Køn</label><select id="sex"><option value="">Ikke angivet</option><option>Mand</option><option>Kvinde</option><option>Andet / ikke oplyst</option></select></div>
+            <div class="field"><label for="center">Center</label><input id="center" autocomplete="off" /></div>
+            <div class="field"><label for="number">Nummer</label><input id="number" autocomplete="off" /></div>
+            <div class="field"><label for="date">Dato</label><input id="date" type="date" /></div>
+          </div>
+          <div class="info-box">
+            HCL-32 er en <strong>selvrapporteret screeningsskala</strong> for hypomane symptomer. Resultatet er ikke en diagnose. En høj score skal altid holdes op mod varighed, funktionspåvirkning, pårørendes observationer, medicin/substanser og differentialdiagnoser.
+            <br><br><strong>Auto-næste:</strong> Når et svar vælges, hopper appen videre til næste relevante felt. Det kan slås fra herunder. Du kan også vælge at vise alle HCL-items på én gang.
+          </div>
+          <label class="auto-row" for="autoNext"><input id="autoNext" type="checkbox" checked> Hop automatisk videre efter svar</label>
+          <label class="auto-row" for="showAllItems"><input id="showAllItems" type="checkbox"> Vis alle HCL-items på én gang</label>
+        </div>
+
+        <form id="hclForm" autocomplete="off">
+          <section class="section" id="sec-current" data-section="current">
+            <div class="section-head"><div><div class="section-title-row"><h2>1) Hvordan har du det lige for tiden?</h2></div><p class="hint">Sæt kun ét kryds.</p></div><span class="status-pill" id="pill-current">Mangler</span></div>
+            <div class="options" id="currentOptions"></div>
+          </section>
+
+          <section class="section" id="sec-usual" data-section="usual">
+            <div class="section-head"><div><div class="section-title-row"><h2>2) Hvordan plejer du at have det sammenlignet med andre?</h2></div><p class="hint">Uafhængigt af den aktuelle tilstand. Sæt kun ét kryds.</p></div><span class="status-pill" id="pill-usual">Mangler</span></div>
+            <div class="options two" id="usualOptions"></div>
+          </section>
+
+          <section class="section" id="sec-hcl-intro">
+            <div class="section-head"><div><div class="section-title-row"><h2>3) Tænk tilbage på en “optur”</h2></div><p class="hint">Vurder de 32 udsagn uafhængigt af nuværende tilstand. Score = antal Ja.</p></div><span class="status-pill" id="pill-hcl-total">0/32</span></div>
+            <div class="info-box">Svar <strong>Ja</strong>, hvis udsagnet passer på dig i en sådan optur. Svar <strong>Nej</strong>, hvis det ikke passer.</div>
+          </section>
+
+          <div id="hclItems"></div>
+
+          <section class="section" id="sec-pattern" data-section="pattern">
+            <div class="section-head"><div><div class="section-title-row"><h2>4) Beskriver udsagnene om “opture”...</h2></div><p class="hint">Vælg den beskrivelse, der passer bedst.</p></div><span class="status-pill" id="pill-pattern">Mangler</span></div>
+            <div class="options" id="patternOptions"></div>
+          </section>
+
+          <section class="section followup" id="sec-life">
+            <div class="section-head"><div><div class="section-title-row"><h2>5) Hvordan påvirker “opture” og “nedture” dit liv?</h2></div><p class="hint">Vælg én vurdering for hvert område.</p></div><span class="status-pill" id="pill-life">Mangler</span></div>
+            <div class="subgrid" id="lifeGrid"></div>
+          </section>
+
+          <section class="section followup" id="sec-reaction" data-section="reaction">
+            <div class="section-head"><div><div class="section-title-row"><h2>6) Andres reaktion på dine “opture”</h2></div><p class="hint">Hvordan har mennesker tæt på dig reageret?</p></div><span class="status-pill" id="pill-reaction">Mangler</span></div>
+            <div class="options" id="reactionOptions"></div>
+          </section>
+
+          <section class="section sometimesOnly" id="sec-duration" data-section="duration">
+            <div class="section-head"><div><div class="section-title-row"><h2>7) Disse “opture” varer i reglen</h2></div><p class="hint">Sæt kun ét kryds.</p></div><span class="status-pill" id="pill-duration">Mangler</span></div>
+            <div class="options two" id="durationOptions"></div>
+          </section>
+
+          <section class="section sometimesOnly" id="sec-last12">
+            <div class="section-head"><div><div class="section-title-row"><h2>8-9) Seneste 12 måneder</h2></div><p class="hint">Har du haft en sådan optur, og cirka hvor mange dage samlet?</p></div><span class="status-pill" id="pill-last12">Mangler</span></div>
+            <div class="options two" id="last12Options"></div>
+            <div class="meta-grid" style="margin-top:12px">
+              <div class="field"><label for="days">Hvis ja: samlet antal dage cirka</label><input id="days" type="number" min="0" step="1" placeholder="Antal dage" /></div>
+            </div>
+          </section>
+        </form>
+      </div>
+
+      <aside class="side">
+        <section class="score-card">
+          <div class="score-top">
+            <div><p class="score-label">Samlet HCL-32</p><div class="score-number" id="scoreNumber">0 <span>/ 32</span></div></div>
+            <div class="severity ok" id="severityBadge">Ikke færdig</div>
+          </div>
+          <div class="bar"><div id="progressBar"></div></div>
+          <div class="progress-text" id="progressText">0 af 32 HCL-items udfyldt.</div>
+          <div class="alert" id="riskAlert">Der er markeret Ja ved et eller flere risikoprægede punkter. Drøft konsekvenser, impulskontrol, økonomi, sex, alkohol/medicin og trafiksikkerhed direkte.</div>
+          <div class="result-box" id="resultBox">Udfyld de 32 HCL-items for at få screeningsresultatet.</div>
+          <div class="side-actions">
+            <button class="btn small" type="button" id="openNote">Journaltekst</button>
+            <button class="btn small light" type="button" id="copySummary">Kopiér resultat</button>
+            <button class="btn small light" type="button" id="exportJson">Eksportér JSON</button>
+            <button class="btn small danger" type="button" id="resetBtn">Nulstil</button>
+          </div>
+          <div class="install-note">Kan lægges på GitHub Pages og installeres som app på mobil. Ingen backend.</div>
+          <div class="source">Kildegrundlag: Hypomani self-rating-skala (HCL-32), dansk version Hillerød 25.4.06. Denne webapp er kun en digital beregner og erstatter ikke klinisk vurdering.</div>
+        </section>
+
+        <section class="score-card compact-hide">
+          <p class="score-label">Hop til del</p>
+          <div class="quick-links">
+            <a href="#sec-current">1 · Aktuel tilstand</a><a href="#sec-usual">2 · Vanligt niveau</a><a href="#sec-hcl-intro">3 · HCL-items</a><a href="#sec-pattern">4 · Mønster</a><a href="#sec-life">5 · Påvirkning</a><a href="#sec-reaction">6 · Andres reaktion</a><a href="#sec-duration">7 · Varighed</a><a href="#sec-last12">8-9 · 12 måneder</a>
+          </div>
+        </section>
+
+        <section class="score-card compact-hide">
+          <p class="score-label" style="margin-bottom:10px">Hop til HCL-item</p>
+          <nav class="toc" id="toc"></nav>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div class="bottom-bar"><div class="bottom-inner"><div class="mini-score"><span>HCL-32</span><br><span id="miniStatus">0/32 udfyldt</span></div><button class="btn small" type="button" onclick="document.querySelector('.side').scrollIntoView()">Se score</button></div></div>
+
+  <dialog id="noteDialog"><div class="dialog-pad"><h2>Journaltekst</h2><p>Teksten opdateres ud fra de valgte svar. Ret den, så den passer til den kliniske vurdering.</p><textarea class="note-output" id="noteOutput"></textarea><div class="side-actions"><button class="btn small" type="button" id="copyNote">Kopiér tekst</button><button class="btn small light" type="button" onclick="noteDialog.close()">Luk</button></div></div></dialog>
+  <div class="toast" id="toast">Kopieret</div>
+
+  <script>
+    const VERSION = "1.0.1";
+    const STORAGE_KEY = "hcl32-hamd-layout-state-v1";
+    const CUTOFF = 14;
+
+    const currentOptions = ["Meget værre end jeg plejer","Værre end jeg plejer","Lidt værre end jeg plejer","Hverken bedre eller værre end jeg plejer","Lidt bedre end jeg plejer","Bedre end jeg plejer","Meget bedre end jeg plejer"];
+    const usualOptions = ["Altid relativt stabil og afbalanceret","Altid relativt høj, dvs. højere end gennemsnittet","Altid relativt lav, dvs. lavere end gennemsnittet","Igen og igen præget af svingninger opad og nedad"];
+    const hclItems = [
+      "Jeg har brug for mindre søvn",
+      "Jeg er mere energisk og aktiv",
+      "Jeg har større selvtillid",
+      "Jeg føler større glæde ved mit arbejde",
+      "Jeg er mere selskabelig (flere telefonsamtaler, går mere i byen)",
+      "Jeg er rejselysten og tager oftere på rejse",
+      "Jeg har tendens til at køre hurtigere og mere risikobetonet",
+      "Jeg bruger flere eller for mange penge",
+      "Jeg tager flere chancer (i forretningssammenhæng eller i hverdagen)",
+      "Jeg er fysisk aktiv (idræt mm.)",
+      "Jeg lægger flere planer",
+      "Jeg får flere idéer, er mere kreativ",
+      "Jeg er mindre genert og tilbageholdende",
+      "Mit tøj/min make-up er mere farverigt og ekstravagant",
+      "Jeg er eller vil gerne være sammen med flere mennesker",
+      "Jeg er mere interesseret i sex og/eller føler større sexlyst",
+      "Jeg flirter mere og/eller er seksuelt mere aktiv",
+      "Jeg er mere snakkesalig",
+      "Jeg tænker hurtigere",
+      "Jeg kommer med flere vittigheder og ordspil",
+      "Jeg bliver let distraheret",
+      "Jeg begynder hele tiden på noget nyt",
+      "Mine tanker springer fra det ene emne til det andet",
+      "Alting falder mig lettere og/eller går hurtigere",
+      "Jeg er utålmodig og/eller bliver lettere irriteret",
+      "Jeg kan være trættende for andre eller gå dem på nerverne",
+      "Jeg kommer let op at skændes med folk",
+      "Mit humør er klart bedre og mere optimistisk",
+      "Jeg drikker mere kaffe",
+      "Jeg ryger mere",
+      "Jeg drikker mere alkohol",
+      "Jeg tager flere medikamenter (beroligende, stimulerende)"
+    ];
+    const patternOptions = [
+      {value:"Sommetider", text:"Som jeg har det eller opfører mig sommetider / ind imellem"},
+      {value:"For det meste", text:"Som jeg har det eller opfører mig for det meste"},
+      {value:"Aldrig", text:"En sådan optur har jeg aldrig oplevet"}
+    ];
+    const lifeDomains = [
+      {id:"family", title:"Familie"},
+      {id:"friends", title:"Venner og bekendte"},
+      {id:"work", title:"Arbejde"},
+      {id:"free", title:"Fritid"}
+    ];
+    const lifeOptions = ["Både positivt og negativt","Positivt","Negativt","Hverken positivt eller negativt"];
+    const reactionOptions = ["Positivt","Neutralt","Negativt","Både positivt og negativt","Ingen reaktion"];
+    const durationOptions = ["1 dag","2-3 dage","4-7 dage","Længere end 1 uge","Længere end 1 måned","Det kan jeg ikke sige / jeg ved det ikke"];
+    const last12Options = ["Ja","Nej"];
+    const riskIndexes = new Set([7,8,9,16,17,25,26,27,31,32]);
+
+    const form = document.getElementById("hclForm");
+    const toc = document.getElementById("toc");
+    const scoreNumber = document.getElementById("scoreNumber");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const resultBox = document.getElementById("resultBox");
+    const severityBadge = document.getElementById("severityBadge");
+    const riskAlert = document.getElementById("riskAlert");
+    const miniStatus = document.getElementById("miniStatus");
+    const toast = document.getElementById("toast");
+    const noteDialog = document.getElementById("noteDialog");
+    const noteOutput = document.getElementById("noteOutput");
+    const autoNext = document.getElementById("autoNext");
+    const showAllItems = document.getElementById("showAllItems");
+    let currentHclItem = 1;
+    const patientIdInput = document.getElementById("patientId");
+    const ageInput = document.getElementById("age");
+    const sexInput = document.getElementById("sex");
+    const centerInput = document.getElementById("center");
+    const numberInput = document.getElementById("number");
+    const dateInput = document.getElementById("date");
+    const daysInput = document.getElementById("days");
+    let autoAdvanceTimer = null;
+
+    function escapeHtml(str){return String(str).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));}
+
+    function optionHtml(name, value, text, opts={}){
+      const cls = opts.simple ? "option simple" : "option";
+      const badge = opts.badge ? `<span class="score-badge">${escapeHtml(opts.badge)}</span>` : "";
+      return `<label class="${cls}"><input type="radio" name="${escapeHtml(name)}" value="${escapeHtml(value)}" ${opts.data ? opts.data : ""}><span class="text">${escapeHtml(text)}</span>${badge}</label>`;
+    }
+
+    function render(){
+      document.getElementById("currentOptions").innerHTML = currentOptions.map(v => optionHtml("current", v, v, {simple:true, data:'data-next-target="sec-usual"'})).join("");
+      document.getElementById("usualOptions").innerHTML = usualOptions.map(v => optionHtml("usual", v, v, {simple:true, data:'data-next-target="hcl-item-1"'})).join("");
+      document.getElementById("hclItems").innerHTML = hclItems.map((text, i) => {
+        const num = i + 1;
+        return `<section class="section" id="hcl-item-${num}">
+          <div class="section-head">
+            <div><div class="section-title-row"><h2>${num}. ${escapeHtml(text)}</h2></div><p class="hint">I denne optur-tilstand passer udsagnet på mig.</p></div>
+            <span class="status-pill" id="pill-q-${num}">Mangler</span>
+          </div>
+          <div class="options two">
+            ${optionHtml(`q${num}`, "ja", "Ja", {badge:"1 p", data:`data-hcl-item="${num}"`})}
+            ${optionHtml(`q${num}`, "nej", "Nej", {badge:"0 p", data:`data-hcl-item="${num}"`})}
+          </div>
+          <div class="flow-controls">
+            <button class="btn small light" type="button" data-prev-target="${num === 1 ? "sec-usual" : "hcl-item-" + (num - 1)}">← Forrige</button>
+            <button class="btn small" type="button" data-next-target="${num === hclItems.length ? "sec-pattern" : "hcl-item-" + (num + 1)}">${num === hclItems.length ? "Videre →" : "Næste →"}</button>
+          </div>
+        </section>`;
+      }).join("");
+      document.getElementById("patternOptions").innerHTML = patternOptions.map(v => optionHtml("pattern", v.value, v.text, {simple:true})).join("");
+      document.getElementById("lifeGrid").innerHTML = lifeDomains.map(domain => `<div class="domain"><h3>${escapeHtml(domain.title)}</h3><div class="options">${lifeOptions.map(v => optionHtml(`life-${domain.id}`, v, v, {simple:true})).join("")}</div></div>`).join("");
+      document.getElementById("reactionOptions").innerHTML = reactionOptions.map(v => optionHtml("reaction", v, v, {simple:true})).join("");
+      document.getElementById("durationOptions").innerHTML = durationOptions.map(v => optionHtml("duration", v, v, {simple:true})).join("");
+      document.getElementById("last12Options").innerHTML = last12Options.map(v => optionHtml("last12", v, v === "Ja" ? "Ja, jeg har haft optur de sidste 12 måneder" : "Nej", {simple:true})).join("");
+      toc.innerHTML = hclItems.map((_, i) => `<a href="#hcl-item-${i+1}" id="toc-${i+1}">${i+1}</a>`).join("");
+    }
+
+    
+    function setActiveHclItem(num, shouldScroll=true){
+      currentHclItem = Math.min(Math.max(Number(num) || 1, 1), hclItems.length);
+      document.body.classList.toggle("single-hcl-mode", !showAllItems?.checked);
+      document.querySelectorAll("#hclItems .section").forEach((el, idx) => el.classList.toggle("active-hcl-item", idx + 1 === currentHclItem));
+      document.querySelectorAll(".toc a").forEach((el, idx) => el.classList.toggle("active", idx + 1 === currentHclItem));
+      if(shouldScroll){
+        const target = document.getElementById(`hcl-item-${currentHclItem}`);
+        if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+      }
+    }
+
+    function selectedValue(name){return document.querySelector(`input[name="${name}"]:checked`)?.value || "";}
+    function setPill(id, done, text){const el=document.getElementById(id); if(!el) return; el.textContent = text || (done ? "Udfyldt" : "Mangler"); el.classList.toggle("done", !!done);}
+    function getMeta(){return {patientId:patientIdInput.value.trim(), age:ageInput.value, sex:sexInput.value, center:centerInput.value.trim(), number:numberInput.value.trim(), date:dateInput.value};}
+    function getAnswers(){return hclItems.map((_, i) => selectedValue(`q${i+1}`));}
+    function getScore(){return getAnswers().filter(v => v === "ja").length;}
+    function getAnsweredCount(){return getAnswers().filter(Boolean).length;}
+    function getRiskYes(){return [...riskIndexes].filter(num => selectedValue(`q${num}`) === "ja");}
+
+    function update(){
+      const score = getScore();
+      const answered = getAnsweredCount();
+      const pct = answered / hclItems.length * 100;
+      scoreNumber.innerHTML = `${score} <span>/ 32</span>`;
+      progressBar.style.width = `${pct}%`;
+      progressText.textContent = `${answered} af 32 HCL-items udfyldt.`;
+      miniStatus.textContent = `${score}/32 · ${answered}/32 udfyldt`;
+      document.getElementById("pill-hcl-total").textContent = `${answered}/32`;
+      document.getElementById("pill-hcl-total").classList.toggle("done", answered === 32);
+
+      hclItems.forEach((_, i) => {
+        const num = i + 1;
+        const val = selectedValue(`q${num}`);
+        setPill(`pill-q-${num}`, !!val, val ? (val === "ja" ? "Ja" : "Nej") : "Mangler");
+        const tocEl = document.getElementById(`toc-${num}`);
+        if(tocEl) tocEl.classList.toggle("done", !!val);
+      });
+
+      setPill("pill-current", !!selectedValue("current"));
+      setPill("pill-usual", !!selectedValue("usual"));
+      setPill("pill-pattern", !!selectedValue("pattern"));
+      setPill("pill-reaction", !!selectedValue("reaction"));
+      setPill("pill-duration", !!selectedValue("duration"));
+      setPill("pill-last12", !!selectedValue("last12"), selectedValue("last12") ? "Udfyldt" : "Mangler");
+      const lifeDone = lifeDomains.every(d => !!selectedValue(`life-${d.id}`));
+      setPill("pill-life", lifeDone);
+
+      const pattern = selectedValue("pattern");
+      document.querySelectorAll(".followup").forEach(el => el.classList.toggle("hidden", pattern === "Aldrig"));
+      document.querySelectorAll(".sometimesOnly").forEach(el => el.classList.toggle("hidden", pattern === "Aldrig" || pattern === "For det meste"));
+
+      riskAlert.classList.toggle("show", getRiskYes().length > 0);
+
+      if(answered < hclItems.length){
+        severityBadge.className = "severity ok";
+        severityBadge.textContent = "Ikke færdig";
+        resultBox.innerHTML = `Udfyld de resterende <strong>${hclItems.length - answered}</strong> HCL-items for at få screeningsresultatet.`;
+      } else if(score >= CUTOFF){
+        severityBadge.className = "severity high";
+        severityBadge.textContent = "Forhøjet score";
+        resultBox.innerHTML = `Score er <strong>${score}/32</strong>, altså på eller over den ofte anvendte cut-off på <strong>${CUTOFF}</strong>. Det er ikke en diagnose, men det skal ikke bagatelliseres: lav ordentlig klinisk vurdering af hypomani/mani, varighed, funktionspåvirkning, risikoadfærd, substanser/medicin og differentialdiagnoser.`;
+      } else {
+        severityBadge.className = "severity ok";
+        severityBadge.textContent = "Under cut-off";
+        resultBox.innerHTML = `Score er <strong>${score}/32</strong>, altså under cut-off på <strong>${CUTOFF}</strong>. Det udelukker ikke bipolaritet eller hypomani, men skemaet giver ikke i sig selv en forhøjet HCL-32 screeningsscore.`;
+      }
+      updateNote();
+      saveState();
+    }
+
+    function updateNote(){
+      const meta = getMeta();
+      const score = getScore();
+      const answered = getAnsweredCount();
+      const pattern = selectedValue("pattern") || "ikke angivet";
+      const current = selectedValue("current") || "ikke angivet";
+      const usual = selectedValue("usual") || "ikke angivet";
+      const reaction = selectedValue("reaction") || "ikke angivet";
+      const duration = selectedValue("duration") || "ikke angivet";
+      const last12 = selectedValue("last12") || "ikke angivet";
+      const daysVal = daysInput.value ? `${daysInput.value} dage` : "ikke angivet";
+      const yesItems = hclItems.map((t,i)=>({num:i+1,text:t,val:selectedValue(`q${i+1}`)})).filter(x=>x.val==="ja").map(x=>`${x.num}. ${x.text}`);
+      const risk = getRiskYes();
+      const life = lifeDomains.map(d => `${d.title}: ${selectedValue(`life-${d.id}`) || "ikke angivet"}`).join("; ");
+      const interpretation = answered < 32 ? "HCL-32 er ikke færdigudfyldt." : (score >= CUTOFF ? `Forhøjet screeningsscore (≥${CUTOFF}); kræver klinisk vurdering og kan ikke stå alene som diagnose.` : `Under cut-off ${CUTOFF}; udelukker ikke hypomani/bipolaritet, men giver ikke i sig selv forhøjet screeningsscore.`);
+      noteOutput.value = `HCL-32 udfyldt${meta.date ? " d. " + meta.date : ""}${meta.patientId ? " for " + meta.patientId : ""}.
+
+Aktuel tilstand: ${current}.
+Vanligt niveau sammenlignet med andre: ${usual}.
+
+HCL-32 score: ${score}/32 (${answered}/32 items besvaret). ${interpretation}
+
+Udsagnene beskriver opture: ${pattern}.
+Påvirkning af livsområder: ${life}.
+Andres reaktion: ${reaction}.
+Varighed: ${duration}.
+Optur sidste 12 måneder: ${last12}. Samlet antal dage: ${daysVal}.
+
+Ja-markerede HCL-items:
+${yesItems.length ? yesItems.map(x => "- " + x).join("\n") : "- Ingen eller ikke udfyldt"}
+
+Risikoprægede ja-svar: ${risk.length ? risk.join(", ") : "ingen markeret"}.
+
+Skemaet tolkes sammen med klinisk anamnese, funktionsniveau, varighed, pårørendeoplysninger, medicin/substanser og differentialdiagnoser.`;
+    }
+
+    function collectState(){
+      const radios = {};
+      document.querySelectorAll('input[type="radio"]:checked').forEach(i => radios[i.name] = i.value);
+      return {version:VERSION, meta:getMeta(), radios, days:daysInput.value, autoNext:autoNext.checked, showAllItems:showAllItems.checked, currentHclItem};
+    }
+    function saveState(){localStorage.setItem(STORAGE_KEY, JSON.stringify(collectState()));}
+    function loadState(){
+      try{
+        const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        if(state.meta){patientIdInput.value=state.meta.patientId||""; ageInput.value=state.meta.age||""; sexInput.value=state.meta.sex||""; centerInput.value=state.meta.center||""; numberInput.value=state.meta.number||""; dateInput.value=state.meta.date||"";}
+        if(state.radios){Object.entries(state.radios).forEach(([name,value]) => {document.querySelectorAll(`input[name="${name}"]`).forEach(input => {if(input.value === value) input.checked = true;});});}
+        if(state.days !== undefined) daysInput.value = state.days;
+        if(typeof state.autoNext === "boolean") autoNext.checked = state.autoNext;
+        if(typeof state.showAllItems === "boolean") showAllItems.checked = state.showAllItems;
+        if(state.currentHclItem) currentHclItem = state.currentHclItem;
+      }catch(e){}
+      if(!dateInput.value) dateInput.value = new Date().toISOString().slice(0,10);
+    }
+
+    function targetAfterChange(input){
+      if(input.dataset.nextTarget) return input.dataset.nextTarget;
+      if(input.dataset.hclItem){
+        const num = Number(input.dataset.hclItem);
+        return num >= hclItems.length ? "sec-pattern" : `hcl-item-${num+1}`;
+      }
+      if(input.name === "pattern"){
+        if(input.value === "Aldrig") return "resultBox";
+        if(input.value === "For det meste") return "sec-life";
+        return "sec-life";
+      }
+      if(input.name && input.name.startsWith("life-")){
+        const allDone = lifeDomains.every(d => !!selectedValue(`life-${d.id}`));
+        return allDone ? "sec-reaction" : "sec-life";
+      }
+      if(input.name === "reaction"){
+        const pattern = selectedValue("pattern");
+        return pattern === "For det meste" ? "resultBox" : "sec-duration";
+      }
+      if(input.name === "duration") return "sec-last12";
+      if(input.name === "last12") return input.value === "Ja" ? "days" : "resultBox";
+      return null;
+    }
+
+    function scrollToId(id){
+      const hclMatch = String(id || "").match(/^hcl-item-(\d+)$/);
+      if(hclMatch){
+        setActiveHclItem(Number(hclMatch[1]), true);
+        return;
+      }
+      const el = document.getElementById(id);
+      if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+    function maybeAutoAdvance(input){
+      if(!autoNext.checked) return;
+      const target = targetAfterChange(input);
+      if(!target) return;
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = setTimeout(() => {
+        if(target === "days") { daysInput.focus(); daysInput.scrollIntoView({behavior:"smooth", block:"center"}); return; }
+        if(target === "resultBox") { document.querySelector(".side").scrollIntoView({behavior:"smooth", block:"start"}); return; }
+        scrollToId(target);
+      }, 180);
+    }
+
+    function resetAll(){
+      localStorage.removeItem(STORAGE_KEY);
+      document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+      [patientIdInput, ageInput, centerInput, numberInput, daysInput].forEach(i => i.value = "");
+      sexInput.value = "";
+      dateInput.value = new Date().toISOString().slice(0,10);
+      autoNext.checked = true;
+      showAllItems.checked = false;
+      currentHclItem = 1;
+      setActiveHclItem(currentHclItem, false);
+      update();
+      showToast("Nulstillet");
+      window.scrollTo({top:0, behavior:"smooth"});
+    }
+
+    async function copyText(text, message="Kopieret"){
+      try{await navigator.clipboard.writeText(text); showToast(message);}catch(e){showToast("Kunne ikke kopiere");}
+    }
+    function showToast(message){toast.textContent = message; toast.classList.add("show"); setTimeout(() => toast.classList.remove("show"), 1800);}
+    function exportJson(){
+      const data = {type:"HCL-32", version:VERSION, cutoff:CUTOFF, meta:getMeta(), state:collectState(), score:getScore(), answered:getAnsweredCount(), exportedAt:new Date().toISOString()};
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `hcl-32-${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
+    }
+
+    render();
+    loadState();
+    setActiveHclItem(currentHclItem, false);
+    update();
+
+    document.addEventListener("click", e => {
+      const tocLink = e.target.closest('#toc a[href^="#hcl-item-"]');
+      if(tocLink){
+        e.preventDefault();
+        const num = Number(tocLink.getAttribute("href").replace("#hcl-item-", ""));
+        setActiveHclItem(num, true);
+        return;
+      }
+      const prevBtn = e.target.closest("[data-prev-target]");
+      if(prevBtn){scrollToId(prevBtn.dataset.prevTarget); return;}
+      const nextBtn = e.target.closest("[data-next-target]");
+      if(nextBtn){scrollToId(nextBtn.dataset.nextTarget); return;}
+    });
+    document.addEventListener("change", e => {
+      if(e.target.matches('input[type="radio"]')){update(); maybeAutoAdvance(e.target); return;}
+      if(e.target.matches('#patientId,#age,#sex,#center,#number,#date,#days,#autoNext,#showAllItems')){ if(e.target.id === 'showAllItems') setActiveHclItem(currentHclItem, false); update(); }
+    });
+    document.addEventListener("input", e => {if(e.target.matches('#patientId,#age,#center,#number,#date,#days')) update();});
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+    document.getElementById("copySummary").addEventListener("click", () => copyText(noteOutput.value, "Resultat kopieret"));
+    document.getElementById("copyNote").addEventListener("click", () => copyText(noteOutput.value, "Journaltekst kopieret"));
+    document.getElementById("exportJson").addEventListener("click", exportJson);
+    document.getElementById("openNote").addEventListener("click", () => { updateNote(); noteDialog.showModal(); });
+    document.getElementById("openNoteTop").addEventListener("click", () => { updateNote(); noteDialog.showModal(); });
+
+    if("serviceWorker" in navigator){window.addEventListener("load", () => navigator.serviceWorker.register("../sw.js").catch(() => {}));}
+  </script>
+</body>
+</html>

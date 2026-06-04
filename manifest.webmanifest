@@ -1,15 +1,41 @@
 {
-  "name": "Hamilton 17 depressionsskala",
-  "short_name": "HAM-D17",
-  "description": "Digital beregner til Hamilton 17 depressionsskala.",
-  "start_url": "./",
+  "name": "Ratingskalaer - affektive lidelser",
+  "short_name": "Ratingskalaer",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#f5f2eb",
   "theme_color": "#26333d",
   "lang": "da",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Hamilton 17",
+      "short_name": "HAM-D17",
+      "url": "./hamd17/index.html"
+    },
+    {
+      "name": "HCL-32",
+      "short_name": "HCL-32",
+      "url": "./hcl32/index.html"
+    },
+    {
+      "name": "Youngs maniskala",
+      "short_name": "YMRS",
+      "url": "./ymrs/index.html"
+    }
   ]
 }

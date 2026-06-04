@@ -1,0 +1,1296 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#26333d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="HAM-D17" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Hamilton 17 depressionsskala</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <style>
+    :root{
+      --bg:#f5f2eb;
+      --panel:#fffdf8;
+      --panel2:#fdf8ef;
+      --text:#20272d;
+      --muted:#66737f;
+      --line:#e6ded0;
+      --accent:#26333d;
+      --accent2:#936f3a;
+      --good:#1f6f55;
+      --warn:#a46100;
+      --bad:#a73434;
+      --shadow:0 18px 45px rgba(28,31,35,.11);
+      --radius:22px;
+      --radius2:14px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(147,111,58,.18), transparent 34rem),
+        linear-gradient(180deg, #faf7f0 0%, var(--bg) 42%, #efe8da 100%);
+      min-height:100vh;
+    }
+    button,input,select,textarea{font:inherit}
+    .app{
+      width:min(1120px,100%);
+      margin:0 auto;
+      padding:20px 16px 120px;
+    }
+    .hero{
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.48);
+      border-radius:30px;
+      background:linear-gradient(135deg,#26333d 0%,#314657 58%,#6f5632 100%);
+      color:white;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+    .hero:before{
+      content:"";
+      position:absolute;
+      inset:auto -60px -100px auto;
+      width:250px;height:250px;
+      border-radius:50%;
+      border:38px solid rgba(255,255,255,.08);
+    }
+    .hero-content{position:relative;z-index:1}
+    .eyebrow{
+      display:inline-flex;
+      gap:8px;
+      align-items:center;
+      padding:7px 11px;
+      border-radius:999px;
+      background:rgba(255,255,255,.12);
+      border:1px solid rgba(255,255,255,.18);
+      font-size:13px;
+      letter-spacing:.02em;
+    }
+    h1{
+      margin:16px 0 8px;
+      font-size:clamp(30px,6vw,54px);
+      line-height:1;
+      letter-spacing:-.055em;
+    }
+    .hero p{
+      max-width:760px;
+      margin:0;
+      color:rgba(255,255,255,.84);
+      font-size:16px;
+      line-height:1.55;
+    }
+    .hero-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:22px;
+    }
+    .btn{
+      border:0;
+      border-radius:999px;
+      padding:12px 16px;
+      cursor:pointer;
+      background:var(--accent);
+      color:white;
+      box-shadow:0 10px 20px rgba(38,51,61,.16);
+      min-height:44px;
+      transition:transform .15s ease, opacity .15s ease, background .15s ease;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0)}
+    .btn.secondary{
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.25);
+    }
+    .btn.light{
+      background:#fffdf8;
+      color:var(--accent);
+      border:1px solid var(--line);
+      box-shadow:none;
+    }
+    .btn.danger{background:var(--bad)}
+    .btn.small{padding:9px 12px;min-height:38px;font-size:14px}
+    .grid{
+      display:grid;
+      grid-template-columns: minmax(0, 1fr) 340px;
+      gap:18px;
+      align-items:start;
+      margin-top:18px;
+    }
+    .card{
+      background:rgba(255,253,248,.86);
+      border:1px solid rgba(230,222,208,.9);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      backdrop-filter:blur(12px);
+    }
+    .card.pad{padding:18px}
+    .meta-grid{
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    .field label{
+      display:block;
+      font-size:12px;
+      font-weight:750;
+      color:var(--muted);
+      margin:0 0 6px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+    }
+    .field input{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:white;
+      padding:12px 13px;
+      color:var(--text);
+      outline:none;
+    }
+    .field input:focus{border-color:var(--accent2); box-shadow:0 0 0 4px rgba(147,111,58,.12)}
+    .info-box{
+      margin-top:12px;
+      background:var(--panel2);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:13px 14px;
+      color:#48545f;
+      line-height:1.45;
+      font-size:14px;
+    }
+    .auto-row{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-top:12px;
+      padding:11px 13px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fffdf8;
+      color:#3f4a53;
+      font-size:14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .auto-row input{width:18px;height:18px;accent-color:var(--accent2)}
+    .item{
+      padding:18px;
+      border-bottom:1px solid var(--line);
+      scroll-margin-top:88px;
+    }
+    .item:last-child{border-bottom:0}
+    .item-head{
+      display:flex;
+      gap:12px;
+      justify-content:space-between;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .item-title-row{
+      display:flex;
+      align-items:center;
+      gap:9px;
+      flex-wrap:wrap;
+    }
+    .item h2{
+      margin:0;
+      font-size:19px;
+      line-height:1.2;
+      letter-spacing:-.02em;
+    }
+    .help-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:30px;
+      height:30px;
+      border-radius:999px;
+      border:1px solid #d7c8ad;
+      background:#fffaf0;
+      color:#6f5632;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(147,111,58,.10);
+      line-height:1;
+    }
+    .help-btn:hover{transform:translateY(-1px); border-color:var(--accent2)}
+    .hint{
+      margin:6px 0 0;
+      color:var(--muted);
+      line-height:1.4;
+      font-size:14px;
+    }
+    .status-pill{
+      flex:0 0 auto;
+      border-radius:999px;
+      padding:6px 9px;
+      border:1px solid var(--line);
+      color:var(--muted);
+      background:white;
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .status-pill.done{
+      color:white;
+      background:var(--good);
+      border-color:var(--good);
+    }
+    .options{
+      display:grid;
+      gap:8px;
+      margin-top:12px;
+    }
+    .option{
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      gap:11px;
+      align-items:start;
+      cursor:pointer;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px 12px;
+      transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease, background .15s ease;
+    }
+    .option:hover{transform:translateY(-1px); border-color:#d0bd9b}
+    .option input{margin-top:2px; width:18px; height:18px; accent-color:var(--accent2)}
+    .option .text{line-height:1.38; font-size:15px}
+    .score-badge{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:36px;
+      height:28px;
+      border-radius:999px;
+      background:#f1eadf;
+      color:#5b4930;
+      font-size:13px;
+      font-weight:800;
+    }
+    .option:has(input:checked){
+      background:#fffaf0;
+      border-color:var(--accent2);
+      box-shadow:0 0 0 4px rgba(147,111,58,.12);
+    }
+    .flow-controls{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-top:14px;
+    }
+    .flow-controls .btn{min-width:108px}
+    .flow-controls .btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+    .side{
+      position:sticky;
+      top:14px;
+      display:grid;
+      gap:14px;
+    }
+    .score-card{
+      background:#fffdf8;
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+    .score-top{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .score-label{margin:0;color:var(--muted);font-size:14px;font-weight:750}
+    .score-number{
+      margin:5px 0 0;
+      font-size:54px;
+      line-height:.9;
+      font-weight:850;
+      letter-spacing:-.07em;
+      color:var(--accent);
+    }
+    .score-number span{font-size:17px;letter-spacing:0;color:var(--muted);font-weight:700}
+    .severity{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      margin-top:12px;
+      border-radius:999px;
+      background:#f1eadf;
+      padding:8px 11px;
+      color:#5b4930;
+      font-weight:800;
+      font-size:14px;
+    }
+    .severity.ok{background:#e6f1ec;color:#1f6f55}
+    .severity.mild{background:#fff1d9;color:#8a5500}
+    .severity.mod{background:#ffe0c2;color:#9a4d00}
+    .severity.severe{background:#f8dddd;color:#9b2b2b}
+    .bar{
+      height:12px;
+      border-radius:999px;
+      background:#ede5d8;
+      overflow:hidden;
+      margin:16px 0 8px;
+    }
+    .bar > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent2),var(--accent));
+      transition:width .2s ease;
+    }
+    .progress-text{color:var(--muted);font-size:13px;line-height:1.35}
+    .side-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+    .result-box{
+      margin-top:14px;
+      border-radius:16px;
+      padding:13px 14px;
+      background:#f6f0e6;
+      border:1px solid var(--line);
+      line-height:1.45;
+      color:#3e4851;
+      font-size:14px;
+    }
+    .alert{
+      display:none;
+      margin-top:12px;
+      border:1px solid rgba(167,52,52,.26);
+      background:#fff1f1;
+      color:#7f2323;
+      border-radius:16px;
+      padding:12px 13px;
+      line-height:1.4;
+      font-size:14px;
+      font-weight:650;
+    }
+    .alert.show{display:block}
+    .toc{
+      display:grid;
+      grid-template-columns:repeat(6,1fr);
+      gap:6px;
+    }
+    .toc a{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      height:34px;
+      text-decoration:none;
+      color:var(--muted);
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:white;
+      font-size:13px;
+      font-weight:800;
+    }
+    .toc a.done{background:var(--good);border-color:var(--good);color:white}
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:22px;
+      transform:translateX(-50%) translateY(25px);
+      opacity:0;
+      pointer-events:none;
+      background:#20272d;
+      color:white;
+      border-radius:999px;
+      padding:12px 16px;
+      box-shadow:var(--shadow);
+      transition:.2s ease;
+      z-index:20;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    .bottom-bar{
+      display:none;
+      position:fixed;
+      left:0;right:0;bottom:0;
+      padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+      background:rgba(255,253,248,.92);
+      border-top:1px solid var(--line);
+      backdrop-filter:blur(16px);
+      z-index:10;
+    }
+    .bottom-inner{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      width:min(1120px,100%);
+      margin:auto;
+    }
+    .mini-score{font-weight:850;color:var(--accent)}
+    .mini-score span{color:var(--muted);font-weight:650;font-size:13px}
+    .install-note{font-size:13px;color:var(--muted);line-height:1.35;margin-top:10px}
+    .source{font-size:12px;color:var(--muted);line-height:1.4;margin-top:14px}
+    dialog{
+      width:min(680px,calc(100% - 24px));
+      border:0;
+      border-radius:24px;
+      padding:0;
+      box-shadow:0 30px 80px rgba(0,0,0,.25);
+      background:#fffdf8;
+      color:var(--text);
+    }
+    dialog::backdrop{background:rgba(18,24,30,.42);backdrop-filter:blur(4px)}
+    .dialog-pad{padding:20px}
+    .dialog-pad h2{margin:0 0 8px;font-size:25px;letter-spacing:-.03em}
+    .dialog-pad p{line-height:1.5;color:#4b5660}
+    .help-content{
+      display:grid;
+      gap:12px;
+      margin:14px 0 4px;
+    }
+    .help-section{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fffaf0;
+      padding:12px 13px;
+    }
+    .help-section h3{
+      margin:0 0 7px;
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.04em;
+      color:#6f5632;
+    }
+    .help-section ul{margin:0;padding-left:20px;color:#3f4a53;line-height:1.45}
+    .help-section li{margin:4px 0}
+    textarea.note-output{
+      width:100%; min-height:210px; resize:vertical;
+      border:1px solid var(--line); border-radius:14px;
+      padding:12px; background:white; color:var(--text);
+    }
+    @media (max-width: 900px){
+      .grid{grid-template-columns:1fr}
+      .side{position:static;order:-1}
+      .toc{grid-template-columns:repeat(9,1fr)}
+      .bottom-bar{display:block}
+      .score-card.compact-hide{display:none}
+      .hero{padding:22px}
+    }
+    @media (max-width: 560px){
+      .app{padding:12px 10px 110px}
+      .hero{border-radius:24px;padding:20px}
+      .hero-actions .btn{flex:1 1 auto}
+      .meta-grid{grid-template-columns:1fr}
+      .item{padding:16px 12px}
+      .item-head{display:block}
+      .status-pill{display:inline-flex;margin-top:10px}
+      .option{grid-template-columns:auto 1fr;}
+      .score-badge{grid-column:2;justify-self:start;height:24px;min-width:32px}
+      .toc{grid-template-columns:repeat(6,1fr)}
+    }
+    @media print{
+      body{background:white}
+      .hero,.side-actions,.bottom-bar,.toc,.btn,.help-btn,.toast,.flow-controls{display:none!important}
+      .app{padding:0}
+      .grid{display:block}
+      .card,.score-card{box-shadow:none;border:1px solid #ccc;background:white}
+      .item{break-inside:avoid;padding:10px 0}
+      .option{display:none}
+      .option:has(input:checked){display:grid;box-shadow:none;border:1px solid #999;background:white}
+      .score-card{margin-bottom:12px}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <div class="hero-content">
+        <div class="eyebrow">HAM-D17 · Observatørvurderet skala · v1.3 med spørgehjælp og auto-næste</div>
+        <h1>Hamilton 17 depressionsskala</h1>
+        <p>Vælg én scoring pr. item. Når et svar er valgt, hopper appen automatisk videre til næste item. Summen beregnes automatisk, og resultatet vises til sidst. Siden gemmer kun lokalt i browseren og sender ingen data nogen steder.</p>
+        <div class="hero-actions">
+          <button class="btn secondary" type="button" onclick="document.querySelector('#item-1').scrollIntoView()">Start vurdering</button>
+          <button class="btn secondary" type="button" id="openNoteTop">Lav journaltekst</button>
+          <button class="btn secondary" type="button" onclick="window.print()">Print / gem som PDF</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <div class="card" id="formCard">
+        <div class="card pad">
+          <div class="meta-grid">
+            <div class="field">
+              <label for="patientId">Patient-ID / initialer</label>
+              <input id="patientId" autocomplete="off" placeholder="Undgå CPR" />
+            </div>
+            <div class="field">
+              <label for="interviewer">Interviewer</label>
+              <input id="interviewer" autocomplete="off" />
+            </div>
+            <div class="field">
+              <label for="date">Dato</label>
+              <input id="date" type="date" />
+            </div>
+            <div class="field">
+              <label for="time">Tidspunkt</label>
+              <input id="time" type="time" />
+            </div>
+          </div>
+          <div class="info-box">
+            Hamilton er en <strong>kliniker-/observatørvurderet</strong> skala. Søvnitems vurderes ud fra de sidste 3 nætter og uafhængigt af sovemedicin. For de enkelte items gælder, at et højere trin også indeholder de lavere trin.
+            <br><br><strong>Ny i v1.3:</strong> Tryk på <strong>?</strong> ved hvert item for forslag til konkrete interviewspørgsmål. Når du vælger et svar, hopper appen automatisk til næste item.
+          </div>
+          <label class="auto-row" for="autoNext">
+            <input id="autoNext" type="checkbox" checked>
+            Hop automatisk til næste item efter svar
+          </label>
+        </div>
+        <form id="hamForm" autocomplete="off"></form>
+      </div>
+
+      <aside class="side">
+        <section class="score-card">
+          <div class="score-top">
+            <div>
+              <p class="score-label">Samlet HAM-D17</p>
+              <div class="score-number" id="scoreNumber">0 <span>/ 52</span></div>
+            </div>
+            <div class="severity ok" id="severityBadge">Ikke færdig</div>
+          </div>
+          <div class="bar"><div id="progressBar"></div></div>
+          <div class="progress-text" id="progressText">0 af 17 items udfyldt.</div>
+          <div class="alert" id="suicideAlert">Item 3 er scoret over 0. Lav en direkte klinisk vurdering af suicidalitet og sikkerhed. Det her må ikke drukne i en totalscore.</div>
+          <div class="result-box" id="resultBox">Udfyld alle 17 items for at få resultat og journaltekst.</div>
+          <div class="side-actions">
+            <button class="btn small" type="button" id="openNote">Journaltekst</button>
+            <button class="btn small light" type="button" id="copySummary">Kopiér resultat</button>
+            <button class="btn small light" type="button" id="exportJson">Eksportér JSON</button>
+            <button class="btn small danger" type="button" id="resetBtn">Nulstil</button>
+          </div>
+          <div class="install-note">Kan lægges på GitHub Pages og installeres som app på mobil. Ingen backend.</div>
+          <div class="source">Kildegrundlag: Hamilton 17 depressionsskala fra Lægehåndbogen/sundhed.dk. Denne webapp er kun en digital beregner og erstatter ikke klinisk vurdering.</div>
+        </section>
+
+        <section class="score-card compact-hide">
+          <p class="score-label" style="margin-bottom:10px">Hop til item</p>
+          <nav class="toc" id="toc"></nav>
+        </section>
+      </aside>
+    </section>
+  </main>
+
+  <div class="bottom-bar">
+    <div class="bottom-inner">
+      <div class="mini-score"><span>HAM-D17</span><br><span id="miniStatus">0/17 udfyldt</span></div>
+      <button class="btn small" type="button" onclick="document.querySelector('.side').scrollIntoView()">Se score</button>
+    </div>
+  </div>
+
+  <dialog id="noteDialog">
+    <div class="dialog-pad">
+      <h2>Journaltekst</h2>
+      <p>Teksten opdateres ud fra de valgte svar. Ret den, så den passer til den kliniske vurdering.</p>
+      <textarea class="note-output" id="noteOutput"></textarea>
+      <div class="side-actions">
+        <button class="btn small" type="button" id="copyNote">Kopiér tekst</button>
+        <button class="btn small light" type="button" onclick="noteDialog.close()">Luk</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="helpDialog">
+    <div class="dialog-pad">
+      <h2 id="helpTitle">Spørgehjælp</h2>
+      <p id="helpIntro">Eksemplerne er kun støtte til interviewet. Scoren er stadig din observatørvurdering.</p>
+      <div class="help-content" id="helpContent"></div>
+      <div class="side-actions">
+        <button class="btn small light" type="button" onclick="helpDialog.close()">Luk</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast">Kopieret</div>
+
+  <script>
+    const VERSION = "1.3.0";
+    const STORAGE_KEY = "hamd17-webapp-state-v1";
+
+    const items = [
+      {
+        title: "Nedsat stemningsleje",
+        note: "Vurder stemningsleje og nonverbale tegn.",
+        options: [
+          "Ikke til stede.",
+          "Let tendens til at være nedstemt, ilde til mode eller i dårligt humør.",
+          "Klarere tegn til nedsat stemningsleje; virker moderat nedtrykt, men ikke håbløs.",
+          "Stemningslejet kraftigt nedsat, eventuelt med nonverbale tegn som gråd. Giver udtryk for håbløshed.",
+          "Stemningslejet meget svært nedsat, med klare tegn til håbløshed eller hjælpeløshed."
+        ]
+      },
+      {
+        title: "Skyldfølelse og selvbebrejdelser",
+        note: "Reduceret selvagtelse med skyldfølelse.",
+        options: [
+          "Ikke præget af nedsat selvvurdering, manglende selvtillid eller skyldfølelse.",
+          "Føler sig mindreværdig i forhold til familie, venner eller arbejdsfæller, fordi patienten har været til besvær under depressionstilstanden.",
+          "Tegn til egentlig skyldfølelse; optaget af forhold fra tiden før depressionen startede, fx mindre undladelser eller fejl.",
+          "Føler at depressionstilstanden skyldes undladelser eller fejl i fortiden, men kan stadig forstandsmæssigt indse, at det næppe er rigtigt.",
+          "Skyldfølelse med oplevelse af, at depressionstilstanden er en straf, og kan ikke forstandsmæssigt korrigeres."
+        ]
+      },
+      {
+        title: "Suicidale impulser",
+        note: "Vurder altid klinisk direkte. Totalscore må ikke stå alene her.",
+        options: [
+          "Ingen / ikke til stede.",
+          "Patienten føler, at livet ikke er værd at leve, men har intet dødsønske.",
+          "Patienten ønsker at dø, fx ikke at vågne op næste morgen, men har ingen aktive planer om at berøve sig livet.",
+          "Har usikre, men aktive planer om at berøve sig livet.",
+          "Har sikre planer om at berøve sig livet."
+        ]
+      },
+      {
+        title: "Indsovningsbesvær",
+        note: "Sidste 3 nætter, uafhængigt af sovemedicin.",
+        options: [
+          "Ikke til stede.",
+          "Har mindst én aften måttet ligge mere end 1/2 time vågen fra ønsket sovetidspunkt, indtil søvnen indtraf.",
+          "Har hver aften måttet ligge over 1/2 time vågen fra ønsket sovetidspunkt."
+        ]
+      },
+      {
+        title: "Afbrudt søvn",
+        note: "Vågner mellem midnat og kl. 5. Sidste 3 nætter, uafhængigt af sovemedicin.",
+        options: [
+          "Ikke til stede.",
+          "Er vågnet op én eller to gange inden for de sidste nætter.",
+          "Er vågnet op hver nat."
+        ]
+      },
+      {
+        title: "Søvnforstyrrelser, tidlig morgenopvågning",
+        note: "Vågner før planlagt. Sidste 3 nætter, uafhængigt af sovemedicin.",
+        options: [
+          "Ikke til stede.",
+          "Er en enkelt gang vågnet op en time eller mere før planlagt.",
+          "Er konstant vågnet op en time eller mere før planlagt."
+        ]
+      },
+      {
+        title: "Arbejde og interesser",
+        note: "Vurder funktion, interesse og evne til rutineaktiviteter.",
+        options: [
+          "Ingen problemer.",
+          "Været mindre interesseret i daglige aktiviteter eller følt sig lidt besværet.",
+          "Har følt sig noget insufficient i sine daglige aktiviteter.",
+          "Har haft svært ved at udføre selv de mere rutineprægede aktiviteter.",
+          "Har ikke været i stand til at udføre rutineprægede aktiviteter uden hjælp."
+        ]
+      },
+      {
+        title: "Psykomotorisk hæmning",
+        note: "Vurder motorisk tempo, mimik, bevægelse og taletrang.",
+        options: [
+          "Ikke til stede.",
+          "Patientens almindelige motoriske tempo er ganske let nedsat.",
+          "Klarere tegn til nedsat motorisk tempo, fx moderat nedsat mimik og bevægelse eller moderat nedsat taletrang.",
+          "Interviewet forlænget eller besværligt på grund af kortfattet besvarelse.",
+          "Interviewet meget vanskeligt at gennemføre pga. verbal hæmning og/eller meget nedsat bevægelsesaktivitet."
+        ]
+      },
+      {
+        title: "Psykomotorisk agitation",
+        note: "Vurder motorisk uro og rastløshed under interviewet.",
+        options: [
+          "Ikke til stede.",
+          "Let motorisk uro, fx tendens til at sidde uroligt eller klø sig i hovedet.",
+          "Klarere tegn til motorisk uro med hændervridning eller moderat siddeuro, men kan forblive siddende.",
+          "Patienten må rejse sig op en enkelt gang under interviewet.",
+          "Patienten er så rastløs, at han/hun må rejse sig og gå omkring flere gange under interviewet."
+        ]
+      },
+      {
+        title: "Angst, psykiske komponenter",
+        note: "Psykisk ængstelse og bekymring. Somatisk angst vurderes i item 11.",
+        options: [
+          "Ikke til stede.",
+          "Let tendens til at være bekymret og bange.",
+          "Klarere tegn til psykisk angst; virker moderat bekymret, utryg eller bange, men kan kontrollere utrygheden.",
+          "Psykisk ængstelse og bekymring er så udtalt, at patienten af og til har svært ved at kontrollere angst, fx på kanten af panikangst. Påvirker af og til daglig adfærd.",
+          "Den psykiske angst er meget udtalt og påvirker mere konstant patientens daglige adfærd."
+        ]
+      },
+      {
+        title: "Angst, somatiske komponenter",
+        note: "Fysiologiske/autonome angstfænomener. Psykisk anspændthed vurderes i item 10.",
+        options: [
+          "Ikke til stede.",
+          "Let tendens til somatisk angst, fx uro i maven, sved eller tremor.",
+          "Klarere tegn til somatisk anspændthed, fx moderat uro i maven, hjertebanken, sved eller tremor. Påvirker dog ikke daglig adfærd.",
+          "Den somatiske angst er så udtalt, at patienten har svært ved at kontrollere den. Påvirker af og til daglig adfærd.",
+          "Den somatiske angst er meget udtalt og påvirker mere konstant patientens daglige adfærd."
+        ]
+      },
+      {
+        title: "Gastrointestinale symptomer",
+        note: "Mundtørhed, nedsat appetit og træg afføring. Abdominal uro vurderes som somatisk angst i item 11.",
+        options: [
+          "Ikke til stede.",
+          "Let nedsat appetit, eller normal fødeindtagelse, men maden smager ikke.",
+          "Moderat eller svær appetitnedsættelse. Patienten spiser dog stadig, fordi han/hun ved, det er vigtigt."
+        ]
+      },
+      {
+        title: "Generelle somatiske symptomer",
+        note: "Træthed, udmattelse, energiløshed og diffuse muskelsmerter.",
+        options: [
+          "Ikke til stede.",
+          "Let følelse af træthed, muskelsmerter eller fx hovedpine.",
+          "Moderat eller svær træthed eller muskelsmerter."
+        ]
+      },
+      {
+        title: "Seksuelle forstyrrelser",
+        note: "Nedsat seksuel lyst eller interesse.",
+        options: [
+          "Ingen forstyrrelser.",
+          "Lette forstyrrelser.",
+          "Moderate til svære forstyrrelser."
+        ]
+      },
+      {
+        title: "Hypokondri / somatisering",
+        note: "Øget optagethed af legemstilstanden.",
+        options: [
+          "Ikke til stede.",
+          "Let optagethed af kroppens funktioner.",
+          "Klarere tegn til bekymring over somatisk tilstand. Virker moderat bange for at fejle noget legemligt og somatiserer depressionen på neurotisk niveau.",
+          "Hypokondrien er mere udtalt. Patienten er overbevist om at fejle noget legemligt, fx cancerfrygt, men kan kortvarigt forstandsmæssigt bringes til at forstå, at dette ikke er tilfældet.",
+          "Hypokondrien er så udtalt, at der er tale om en ikke-korrigerbar paranoid forestilling, ofte med nihilistisk præg som 'rådner indvendigt' eller 'maven forsvinder'."
+        ]
+      },
+      {
+        title: "Sygdomsindsigt",
+        note: "Kun meningsfyldt hvis intervieweren selv vurderer, at patienten har en depressiv tilstand.",
+        options: [
+          "Patienten er enig i, at han/hun har en depression eller lignende mental lidelse.",
+          "Patienten føler sig depressiv, men opfatter ikke dette som en sygdom.",
+          "Patienten føler sig hverken syg eller stresset. Udspørg i så fald om paranoid skyldfølelse eller paranoid hypokondri."
+        ]
+      },
+      {
+        title: "Vægttab",
+        note: "Der bør så vidt muligt opnås information om legemsvægten målt i kg.",
+        options: [
+          "Intet vægttab.",
+          "Vægttab mindre end 2 kg.",
+          "Vægttab svarende til 2 kg eller mere."
+        ]
+      }
+    ];
+
+    const helpExamples = [
+      {
+        ask: [
+          "Hvordan har dit humør været de sidste dage?",
+          "Har du følt dig nedtrykt, trist, tom eller mere irritabel end normalt?",
+          "Har du oplevet håbløshed eller en følelse af, at tingene ikke kan blive bedre?"
+        ],
+        observe: [
+          "Se efter mimik, gråd, stemmeleje, kontakt og om patienten virker følelsesmæssigt trykket.",
+          "Score ikke kun ud fra ordene. Nonverbale tegn tæller også."
+        ]
+      },
+      {
+        ask: [
+          "Har du bebrejdet dig selv noget på det seneste?",
+          "Føler du dig som en belastning for familie, venner eller arbejde?",
+          "Tænker du, at din nuværende tilstand er din egen skyld eller en straf?"
+        ],
+        observe: [
+          "Skeln mellem almindelig selvkritik, egentlig skyldfølelse og fastlåste/vrangforestillingsprægede skyldtanker.",
+          "Spørg konkret til fejl eller undladelser fra før depressionen startede."
+        ]
+      },
+      {
+        ask: [
+          "Har du tænkt, at livet ikke er værd at leve?",
+          "Har du ønsket, at du ikke vågnede igen?",
+          "Har du haft tanker om at tage dit eget liv?",
+          "Har du gjort dig planer, valgt metode eller haft adgang til midler?",
+          "Hvor tæt har du været på at handle på tankerne?"
+        ],
+        observe: [
+          "Spørg direkte. Det er ikke farligt at spørge, men det er farligt at lade være.",
+          "Ved score over 0 skal der laves selvstændig risikovurdering, sikkerhedsplan og relevant handling."
+        ]
+      },
+      {
+        ask: [
+          "De sidste 3 nætter: Hvornår lagde du dig for at sove, og hvornår faldt du faktisk i søvn?",
+          "Lå du vågen mere end en halv time?",
+          "Var det én aften eller hver aften?"
+        ],
+        observe: [
+          "Vurder uafhængigt af sovemedicin.",
+          "Fokus er tiden fra ønsket søvntidspunkt til søvnindtræden."
+        ]
+      },
+      {
+        ask: [
+          "De sidste 3 nætter: Er du vågnet mellem midnat og kl. 5?",
+          "Hvor mange gange er du vågnet, og kunne du falde i søvn igen?",
+          "Skete det én/to gange samlet, eller hver nat?"
+        ],
+        observe: [
+          "Vurder uafhængigt af sovemedicin.",
+          "Adskil afbrudt søvn fra tidlig morgenopvågning, som scores i næste item."
+        ]
+      },
+      {
+        ask: [
+          "De sidste 3 nætter: Er du vågnet tidligere end planlagt?",
+          "Hvor meget tidligere vågnede du — mindst en time?",
+          "Var det en enkelt gang eller konstant/hver nat?"
+        ],
+        observe: [
+          "Vurder uafhængigt af sovemedicin.",
+          "Det centrale er opvågning før planlagt, ikke bare dårlig søvnkvalitet."
+        ]
+      },
+      {
+        ask: [
+          "Hvordan går det med arbejde, hjemlige pligter og daglige rutiner?",
+          "Har du mindre interesse for ting, du normalt plejer at gøre?",
+          "Er der aktiviteter, du kun får gjort med stort besvær — eller slet ikke uden hjælp?"
+        ],
+        observe: [
+          "Score funktionstab og interesse, ikke kun om patienten formelt er sygemeldt.",
+          "Spørg efter konkrete eksempler: bad, mad, oprydning, indkøb, arbejde, kontakt til andre."
+        ]
+      },
+      {
+        ask: [
+          "Oplever du selv, at du er blevet langsommere i tale, tanker eller bevægelser?",
+          "Tager det længere tid at svare eller komme i gang med ting?"
+        ],
+        observe: [
+          "Dette er primært en observationsscore: mimik, latenstid, taletrang, bevægelse og hvor tungt interviewet flyder.",
+          "Score højere hvis interviewet bliver klart forlænget eller vanskeligt pga. hæmning."
+        ]
+      },
+      {
+        ask: [
+          "Føler du dig rastløs eller urolig i kroppen?",
+          "Har du svært ved at sidde stille?",
+          "Rejser du dig, går rundt, vrider hænder eller piller ved ting?"
+        ],
+        observe: [
+          "Se efter siddeuro, hændervridning, pilleri, behov for at rejse sig og generel rastløshed.",
+          "Adskil agitation fra almindelig nervøsitet; her handler det om motorisk uro."
+        ]
+      },
+      {
+        ask: [
+          "Har du følt dig mere bekymret, utryg eller bange end normalt?",
+          "Kan du styre bekymringerne, eller tager de over?",
+          "Har angsten påvirket din adfærd, fx at du undgår ting eller næsten får panik?"
+        ],
+        observe: [
+          "Dette item er den psykiske del: bekymring, ængstelse, frygt og kontroltab.",
+          "Fysiske angstsymptomer scores i item 11."
+        ]
+      },
+      {
+        ask: [
+          "Har du haft uro i maven, hjertebanken, svedtendens, rysten eller trykken for brystet?",
+          "Kommer symptomerne sammen med angst eller bekymring?",
+          "Påvirker de din hverdag eller får dig til at undgå noget?"
+        ],
+        observe: [
+          "Dette item er de kropslige/autonome angsttegn.",
+          "Psykisk anspændthed og bekymring scores i item 10."
+        ]
+      },
+      {
+        ask: [
+          "Hvordan er appetitten?",
+          "Smager maden anderledes eller mindre end normalt?",
+          "Spiser du mindre, eller spiser du mest fordi du ved, du bør?",
+          "Har du mundtørhed eller træg mave?"
+        ],
+        observe: [
+          "Abdominal uro som 'sommerfugle i maven' hører under somatisk angst i item 11.",
+          "Her handler det især om appetit, smag, mundtørhed og tarmfunktion."
+        ]
+      },
+      {
+        ask: [
+          "Hvordan er energien i kroppen?",
+          "Føler du dig træt, udmattet eller energiløs?",
+          "Har du diffuse smerter, fx i nakke, skuldre, ryg, arme eller ben?",
+          "Har du hovedpine eller kropslig tyngde?"
+        ],
+        observe: [
+          "Score graden af fysisk træthed/udmattelse og diffuse muskelsmerter.",
+          "Hold det adskilt fra nedsat interesse og funktion, som scores i item 7."
+        ]
+      },
+      {
+        ask: [
+          "Har din seksuelle lyst eller interesse ændret sig?",
+          "Er det let, moderat eller tydeligt nedsat i forhold til normalt?",
+          "Er ændringen ny i forbindelse med den aktuelle tilstand?"
+        ],
+        observe: [
+          "Spørg enkelt og udramatisk. Patienten svarer ofte bedre, hvis spørgsmålet normaliseres.",
+          "Tag højde for alder, relation, medicin og somatisk sygdom, men score det aktuelle symptomniveau."
+        ]
+      },
+      {
+        ask: [
+          "Er du blevet mere bekymret for dit helbred eller kroppens funktioner?",
+          "Tænker du meget på, om du fejler noget alvorligt?",
+          "Kan du beroliges, når undersøgelser eller læger siger, at der ikke er tegn på alvorlig sygdom?",
+          "Har du faste tanker om fx kræft, at kroppen svigter, eller at noget er galt indvendigt?"
+        ],
+        observe: [
+          "Skeln mellem let kropslig optagethed, neurotisk somatisering og fastlåst paranoid/nihilistisk hypokondri.",
+          "Oplevelsen af at 'maven forsvinder' hører her, ikke under almindelige mavesymptomer."
+        ]
+      },
+      {
+        ask: [
+          "Hvordan forstår du selv det, du går igennem lige nu?",
+          "Tænker du, at du er deprimeret, stresset, syg — eller noget andet?",
+          "Giver det mening for dig, at symptomerne kan være udtryk for en depressiv tilstand?"
+        ],
+        observe: [
+          "Dette item bruges kun meningsfuldt, hvis du selv vurderer, at der er en depressiv tilstand.",
+          "Ved manglende sygdomsindsigt: spørg også ind til paranoid skyldfølelse og hypokondri."
+        ]
+      },
+      {
+        ask: [
+          "Har din vægt ændret sig?",
+          "Har du vejet dig — og hvor mange kilo har du eventuelt tabt?",
+          "Sidder tøjet løsere, eller har andre bemærket vægttab?",
+          "Skyldes vægttabet nedsat appetit, kvalme, bevidst vægttab eller noget andet?"
+        ],
+        observe: [
+          "Få helst konkret vægt i kg frem for fornemmelse.",
+          "Skeln mellem intet vægttab, under 2 kg og 2 kg eller mere."
+        ]
+      }
+    ];
+
+    const form = document.getElementById("hamForm");
+    const toc = document.getElementById("toc");
+    const scoreNumber = document.getElementById("scoreNumber");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const resultBox = document.getElementById("resultBox");
+    const severityBadge = document.getElementById("severityBadge");
+    const suicideAlert = document.getElementById("suicideAlert");
+    const miniStatus = document.getElementById("miniStatus");
+    const toast = document.getElementById("toast");
+    const noteDialog = document.getElementById("noteDialog");
+    const noteOutput = document.getElementById("noteOutput");
+    const helpDialog = document.getElementById("helpDialog");
+    const helpTitle = document.getElementById("helpTitle");
+    const helpContent = document.getElementById("helpContent");
+    const autoNext = document.getElementById("autoNext");
+    let autoAdvanceTimer = null;
+
+    function renderItems(){
+      form.innerHTML = items.map((item, idx) => {
+        const num = idx + 1;
+        const options = item.options.map((text, score) => `
+          <label class="option">
+            <input type="radio" name="item${num}" value="${score}" data-item="${num}">
+            <span class="text">${escapeHtml(text)}</span>
+            <span class="score-badge">${score} p</span>
+          </label>`).join("");
+        return `
+          <section class="item" id="item-${num}">
+            <div class="item-head">
+              <div>
+                <div class="item-title-row">
+                  <h2>${num}. ${escapeHtml(item.title)}</h2>
+                  <button class="help-btn" type="button" data-help="${idx}" aria-label="Spørgehjælp til item ${num}">?</button>
+                </div>
+                <p class="hint">${escapeHtml(item.note)}</p>
+              </div>
+              <span class="status-pill" id="pill-${num}">Mangler</span>
+            </div>
+            <div class="options">${options}</div>
+            <div class="flow-controls">
+              <button class="btn small light" type="button" data-prev="${num - 1}" ${num === 1 ? "disabled" : ""}>← Forrige</button>
+              <button class="btn small" type="button" data-next="${num + 1}" ${num === items.length ? "data-show-result='true'" : ""}>${num === items.length ? "Se resultat" : "Næste →"}</button>
+            </div>
+          </section>`;
+      }).join("");
+
+      toc.innerHTML = items.map((_, idx) => `<a href="#item-${idx+1}" id="toc-${idx+1}">${idx+1}</a>`).join("");
+    }
+
+    function escapeHtml(str){
+      return String(str).replace(/[&<>'"]/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;","\"":"&quot;"}[char]));
+    }
+
+    function openHelp(idx){
+      const item = items[idx];
+      const help = helpExamples[idx];
+      if(!item || !help) return;
+      helpTitle.textContent = `${idx + 1}. ${item.title}`;
+      const askList = help.ask.map(q => `<li>${escapeHtml(q)}</li>`).join("");
+      const observeList = help.observe.map(q => `<li>${escapeHtml(q)}</li>`).join("");
+      helpContent.innerHTML = `
+        <div class="help-section">
+          <h3>Eksempler på spørgsmål</h3>
+          <ul>${askList}</ul>
+        </div>
+        <div class="help-section">
+          <h3>Vurdering / observation</h3>
+          <ul>${observeList}</ul>
+        </div>`;
+      helpDialog.showModal();
+    }
+
+    function scrollToItem(num){
+      const target = document.getElementById(`item-${num}`);
+      if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function scrollToResult(){
+      const target = document.querySelector(".score-card");
+      if(target) target.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+
+    function maybeAutoAdvance(currentNum){
+      if(!autoNext || !autoNext.checked) return;
+      clearTimeout(autoAdvanceTimer);
+      autoAdvanceTimer = setTimeout(() => {
+        if(currentNum < items.length){
+          scrollToItem(currentNum + 1);
+        } else {
+          scrollToResult();
+          showToast("Alle items er udfyldt");
+        }
+      }, 320);
+    }
+
+    function getAnswers(){
+      return items.map((_, idx) => {
+        const checked = document.querySelector(`input[name="item${idx+1}"]:checked`);
+        return checked ? Number(checked.value) : null;
+      });
+    }
+
+    function getMeta(){
+      return {
+        patientId: document.getElementById("patientId").value.trim(),
+        interviewer: document.getElementById("interviewer").value.trim(),
+        date: document.getElementById("date").value,
+        time: document.getElementById("time").value
+      };
+    }
+
+    function severity(score, complete){
+      if(!complete) return {label:"Ikke færdig", cls:"ok", text:"Udfyld alle 17 items for at få resultat."};
+      if(score >= 25) return {label:"Svær depression", cls:"severe", text:"Svarer til svær depression efter de angivne HAM-D17 grænser."};
+      if(score >= 18) return {label:"Moderat depression", cls:"mod", text:"Svarer til moderat depression efter de angivne HAM-D17 grænser."};
+      if(score >= 13) return {label:"Let depression", cls:"mild", text:"Svarer til let depression efter de angivne HAM-D17 grænser."};
+      return {label:"Under 13 point", cls:"ok", text:"Under de depressionsgrænser, der er angivet i denne udgave. Det er ikke det samme som 'ingen klinisk problematik'."};
+    }
+
+    function update(){
+      const answers = getAnswers();
+      const answered = answers.filter(v => v !== null).length;
+      const total = answers.reduce((sum, v) => sum + (v ?? 0), 0);
+      const complete = answered === items.length;
+      const sev = severity(total, complete);
+
+      scoreNumber.innerHTML = `${total} <span>/ 52</span>`;
+      progressBar.style.width = `${(answered / items.length) * 100}%`;
+      progressText.textContent = `${answered} af ${items.length} items udfyldt.`;
+      miniStatus.textContent = `${answered}/17 udfyldt · ${total}/52 point`;
+      severityBadge.textContent = sev.label;
+      severityBadge.className = `severity ${sev.cls}`;
+
+      answers.forEach((v, idx) => {
+        const num = idx + 1;
+        const done = v !== null;
+        const pill = document.getElementById(`pill-${num}`);
+        const link = document.getElementById(`toc-${num}`);
+        pill.textContent = done ? `${v} point` : "Mangler";
+        pill.classList.toggle("done", done);
+        link.classList.toggle("done", done);
+      });
+
+      const item3 = answers[2];
+      suicideAlert.classList.toggle("show", item3 !== null && item3 > 0);
+
+      if(complete){
+        resultBox.innerHTML = `<strong>Resultat:</strong> HAM-D17 = <strong>${total}/52</strong>. ${sev.text}`;
+      } else {
+        resultBox.innerHTML = `Mangler <strong>${items.length - answered}</strong> item${items.length - answered === 1 ? "" : "s"}. Foreløbig sum er <strong>${total}/52</strong>.`;
+      }
+      saveState();
+      updateNote();
+    }
+
+    function updateNote(){
+      const answers = getAnswers();
+      const answered = answers.filter(v => v !== null).length;
+      const total = answers.reduce((sum, v) => sum + (v ?? 0), 0);
+      const complete = answered === items.length;
+      const sev = severity(total, complete);
+      const meta = getMeta();
+      const topItems = answers
+        .map((score, idx) => ({score, idx}))
+        .filter(x => x.score !== null && x.score > 0)
+        .sort((a,b) => b.score - a.score || a.idx - b.idx)
+        .slice(0,5)
+        .map(x => `${x.idx+1}. ${items[x.idx].title} (${x.score} p)`).join(", ");
+
+      const lines = [];
+      lines.push(`HAM-D17 udført${meta.date ? " d. " + formatDate(meta.date) : ""}${meta.time ? " kl. " + meta.time : ""}.`);
+      if(meta.patientId) lines.push(`Patient-ID/initialer: ${meta.patientId}.`);
+      if(meta.interviewer) lines.push(`Interviewer: ${meta.interviewer}.`);
+      lines.push(`Samlet score: ${total}/52 point${complete ? `, ${sev.label.toLowerCase()}.` : `, men skalaen er ikke færdigudfyldt (${answered}/17 items).`}`);
+      if(complete) lines.push(sev.text);
+      if(topItems) lines.push(`Mest belastede items: ${topItems}.`);
+      if(answers[2] !== null && answers[2] > 0) lines.push(`OBS: Item 3 om suicidale impulser er scoret ${answers[2]} point og kræver selvstændig klinisk vurdering.`);
+      lines.push("Skalaen er observatørvurderet, og resultatet skal tolkes sammen med den samlede kliniske vurdering.");
+      noteOutput.value = lines.join("\n");
+    }
+
+    function formatDate(iso){
+      const [y,m,d] = iso.split("-");
+      return `${d}.${m}.${y}`;
+    }
+
+    function saveState(){
+      const state = { meta:getMeta(), answers:getAnswers(), autoNext:autoNext ? autoNext.checked : true, version:VERSION, savedAt:new Date().toISOString() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function loadState(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const today = new Date();
+      const dateEl = document.getElementById("date");
+      const timeEl = document.getElementById("time");
+      dateEl.value = today.toISOString().slice(0,10);
+      timeEl.value = `${String(today.getHours()).padStart(2,"0")}:${String(today.getMinutes()).padStart(2,"0")}`;
+      if(!raw) return;
+      try{
+        const state = JSON.parse(raw);
+        if(state.meta){
+          document.getElementById("patientId").value = state.meta.patientId || "";
+          document.getElementById("interviewer").value = state.meta.interviewer || "";
+          document.getElementById("date").value = state.meta.date || dateEl.value;
+          document.getElementById("time").value = state.meta.time || timeEl.value;
+        }
+        if(typeof state.autoNext === "boolean" && autoNext){
+          autoNext.checked = state.autoNext;
+        }
+        if(Array.isArray(state.answers)){
+          state.answers.forEach((value, idx) => {
+            if(value !== null && value !== undefined){
+              const input = document.querySelector(`input[name="item${idx+1}"][value="${value}"]`);
+              if(input) input.checked = true;
+            }
+          });
+        }
+      } catch(e){
+        console.warn("Kunne ikke indlæse gemt tilstand", e);
+      }
+    }
+
+    function resetAll(){
+      if(!confirm("Nulstil hele vurderingen?")) return;
+      localStorage.removeItem(STORAGE_KEY);
+      document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+      document.getElementById("patientId").value = "";
+      document.getElementById("interviewer").value = "";
+      const today = new Date();
+      document.getElementById("date").value = today.toISOString().slice(0,10);
+      document.getElementById("time").value = `${String(today.getHours()).padStart(2,"0")}:${String(today.getMinutes()).padStart(2,"0")}`;
+      update();
+      showToast("Nulstillet");
+    }
+
+    async function copyText(text, message="Kopieret"){
+      try{
+        await navigator.clipboard.writeText(text);
+        showToast(message);
+      } catch(e){
+        showToast("Kunne ikke kopiere");
+      }
+    }
+
+    function showToast(message){
+      toast.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function exportJson(){
+      const data = { type:"HAM-D17", version:VERSION, meta:getMeta(), answers:getAnswers(), total:getAnswers().reduce((s,v)=>s+(v??0),0), exportedAt:new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `ham-d17-${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderItems();
+    loadState();
+    update();
+
+    document.addEventListener("click", e => {
+      const helpBtn = e.target.closest(".help-btn");
+      if(helpBtn){
+        openHelp(Number(helpBtn.dataset.help));
+        return;
+      }
+      const prevBtn = e.target.closest("[data-prev]");
+      if(prevBtn && !prevBtn.disabled){
+        scrollToItem(Number(prevBtn.dataset.prev));
+        return;
+      }
+      const nextBtn = e.target.closest("[data-next]");
+      if(nextBtn){
+        if(nextBtn.dataset.showResult === "true") scrollToResult();
+        else scrollToItem(Number(nextBtn.dataset.next));
+      }
+    });
+
+    document.addEventListener("change", e => {
+      if(e.target.matches('input[type="radio"]')){
+        update();
+        maybeAutoAdvance(Number(e.target.dataset.item));
+        return;
+      }
+      if(e.target.matches('#patientId, #interviewer, #date, #time, #autoNext')) update();
+    });
+    document.addEventListener("input", e => {
+      if(e.target.matches('#patientId, #interviewer, #date, #time')) update();
+    });
+    document.getElementById("resetBtn").addEventListener("click", resetAll);
+    document.getElementById("copySummary").addEventListener("click", () => copyText(noteOutput.value, "Resultat kopieret"));
+    document.getElementById("copyNote").addEventListener("click", () => copyText(noteOutput.value, "Journaltekst kopieret"));
+    document.getElementById("exportJson").addEventListener("click", exportJson);
+    document.getElementById("openNote").addEventListener("click", () => { updateNote(); noteDialog.showModal(); });
+    document.getElementById("openNoteTop").addEventListener("click", () => { updateNote(); noteDialog.showModal(); });
+
+    if("serviceWorker" in navigator){
+      window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    }
+  </script>
+</body>
+</html>

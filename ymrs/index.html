@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#26333d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Ratingskalaer" />
+  <title>Youngs Maniskala · YMRS</title>
+  <link rel="manifest" href="../manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="../icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero-top">
+        <div class="logo" aria-hidden="true">Y</div>
+        <div>
+          <p class="eyebrow">Young Mania Rating Scale</p>
+          <h1>Youngs Maniskala</h1>
+        </div>
+      </div>
+      <p class="hero-text">Kliniker-rated vurdering af maniske symptomer. Udfyld de 11 items og få totalscore med YMRS-interval.</p>
+      <div class="hero-actions">
+        <a class="ghost home-link" href="../index.html">← Forside</a>
+        <button class="primary" id="startBtn" type="button">Start vurdering</button>
+        <button class="ghost" id="showAllBtn" type="button">Vis alle items</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="card patient-card" aria-label="Patientoplysninger">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Vurdering</p>
+            <h2>Oplysninger</h2>
+          </div>
+          <span class="pill" id="saveState">Ikke gemt</span>
+        </div>
+        <div class="form-grid">
+          <label>
+            <span>Patient-ID / navn</span>
+            <input id="patientId" type="text" autocomplete="off" placeholder="fx initialer eller journal-ID" />
+          </label>
+          <label>
+            <span>Dato</span>
+            <input id="ratingDate" type="date" />
+          </label>
+        </div>
+        <label class="notes-label">
+          <span>Noter</span>
+          <textarea id="notes" rows="3" placeholder="Kort klinisk note, kontekst, søvn, observationer osv."></textarea>
+        </label>
+      </section>
+
+      <section class="score-dock" aria-label="Aktuel score">
+        <div>
+          <p class="eyebrow">Aktuel score</p>
+          <strong id="liveScore">0</strong><span class="muted"> / 60</span>
+        </div>
+        <div>
+          <p class="eyebrow">Besvarelse</p>
+          <strong id="answeredCount">0</strong><span class="muted"> / 11</span>
+        </div>
+        <div class="mini-result" id="miniResult">Ikke komplet</div>
+      </section>
+
+      <section class="card progress-card" aria-label="Progression">
+        <div class="progress-header">
+          <span id="stepLabel">Item 1 af 11</span>
+          <label class="toggle">
+            <input id="autoNext" type="checkbox" checked />
+            <span>Hop videre</span>
+          </label>
+        </div>
+        <div class="progress-track" aria-hidden="true"><div id="progressBar"></div></div>
+      </section>
+
+      <section class="card item-card" id="singleMode" aria-live="polite">
+        <div class="item-head">
+          <button class="nav-btn" id="prevBtn" type="button" aria-label="Forrige item">‹</button>
+          <div>
+            <p class="eyebrow" id="itemMeta">Item</p>
+            <h2 id="itemTitle">Titel</h2>
+          </div>
+          <button class="nav-btn" id="nextBtn" type="button" aria-label="Næste item">›</button>
+        </div>
+        <p class="item-note" id="itemNote"></p>
+        <div class="option-list" id="optionList"></div>
+      </section>
+
+      <section class="all-mode hidden" id="allMode" aria-label="Alle items"></section>
+
+      <section class="card result-card" id="resultCard">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Resultat</p>
+            <h2 id="resultTitle">Udfyld alle items</h2>
+          </div>
+          <div class="score-badge"><span id="resultScore">0</span><small>/60</small></div>
+        </div>
+        <p id="resultText" class="result-text">Resultatet vises, når alle 11 items er udfyldt.</p>
+        <div class="thresholds" aria-label="YMRS intervaller">
+          <div><span>0–15</span><strong>Under YMRS’ mani-intervaller</strong></div>
+          <div><span>16–22</span><strong>Let mani</strong></div>
+          <div><span>23–31</span><strong>Middelsvær mani</strong></div>
+          <div><span>32–60</span><strong>Svær mani</strong></div>
+        </div>
+        <div id="flags" class="flags"></div>
+        <div class="result-actions">
+          <button class="primary" id="saveBtn" type="button">Gem lokalt</button>
+          <button class="ghost" id="copyBtn" type="button">Kopiér resultat</button>
+          <button class="ghost" id="downloadBtn" type="button">Download rapport</button>
+          <button class="danger" id="resetBtn" type="button">Nulstil</button>
+        </div>
+      </section>
+
+      <section class="card history-card">
+        <div class="section-title-row">
+          <div>
+            <p class="eyebrow">Lokalt arkiv</p>
+            <h2>Gemte vurderinger</h2>
+          </div>
+          <button class="ghost small" id="clearHistoryBtn" type="button">Ryd</button>
+        </div>
+        <div id="historyList" class="history-list empty">Ingen gemte vurderinger endnu.</div>
+      </section>
+
+      <section class="card disclaimer-card">
+        <h2>Brug uden pis</h2>
+        <p>YMRS er et klinisk ratingredskab, ikke en diagnosemaskine. Brug resultatet som struktureret støtte til vurdering, dokumentation og opfølgning — ikke som erstatning for klinisk vurdering.</p>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
